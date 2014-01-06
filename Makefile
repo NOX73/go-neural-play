@@ -1,7 +1,7 @@
-export GOPATH := /home/nox73/.go:$(PWD)
+export GOPATH := $(GOPATH):$(PWD)
 
 run:
-	@( go run *.go )
+	@( go run main.go )
 
 deps:
 	@( \

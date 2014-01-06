@@ -1,4 +1,4 @@
-package main
+package play
 
 import (
   "github.com/NOX73/go-neural"
