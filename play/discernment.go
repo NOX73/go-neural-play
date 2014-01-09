@@ -43,11 +43,12 @@ func testNetwork (n *neural.Network) {
   //sample := loadSample("multiple2")
   //sample := loadSample("divide")
 
+  log.Println("Sample \t Evaluation \t Result")
   for _, sampleName := range samples {
     sample := loadSample(sampleName)
     res := n.Calculate(sample.In)
     e := lern.Evaluation(n, sample.In, sample.Out)
-    log.Printf("%s - %.3f: %v" , sampleName, e, res)
+    log.Printf("%s \t %.3f \t\t %v" , sampleName, e, res)
   }
 }
 func lernNetwork (n *neural.Network) {
