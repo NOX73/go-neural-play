@@ -26,32 +26,37 @@ func DiscernmentMain () {
   n := loadNetwork()
 
   testNetwork(n)
-  //lernNetwork(n)
-  //testNetwork(n)
+  lernNetwork(n)
+  testNetwork(n)
 
   saveNetwork(n)
 }
 
 func testNetwork (n *neural.Network) {
+  log.Println("--------------------------------------")
+  //samples := []string{"plus", "plus2", "minus", "multiple", "multiple2", "divide"}
+  samples := []string{"plus", "minus", "multiple", "divide"}
   //sample := loadSample("plus")
   //sample := loadSample("plus2")
   //sample := loadSample("minus")
   //sample := loadSample("multiple")
-  sample := loadSample("multiple2")
+  //sample := loadSample("multiple2")
   //sample := loadSample("divide")
 
-  res := n.Calculate(sample.In)
-  log.Println(res)
+  for _, sample := range samples {
+    res := n.Calculate(loadSample(sample).In)
+    log.Printf("%s: %v",sample, res)
+  }
 }
 func lernNetwork (n *neural.Network) {
   samples := make([]*Sample,0,10)
-  //samples = append(samples, loadSample("plus"))
-  //samples = append(samples, loadSample("minus"))
+  samples = append(samples, loadSample("plus"))
+  samples = append(samples, loadSample("minus"))
   samples = append(samples, loadSample("multiple"))
-  //samples = append(samples, loadSample("divide"))
+  samples = append(samples, loadSample("divide"))
 
-  for _, s := range samples {
-    for i := 0; i < 1000000; i++ {
+  for i := 0; i < 10000; i++ {
+    for _, s := range samples {
       lern.Lern(n, s.In, s.Out, speed)
     }
   }
