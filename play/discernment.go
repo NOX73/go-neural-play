@@ -16,6 +16,8 @@ const (
   sampleFile = "json/sample/"
 )
 
+var sampleNames= []string{"plus", "minus", "multiple", "divide"}
+
 type Sample struct {
   In  []float64
   Out []float64
@@ -34,17 +36,10 @@ func DiscernmentMain () {
 
 func testNetwork (n *neural.Network) {
   log.Println("--------------------------------------")
-  //samples := []string{"plus", "plus2", "minus", "multiple", "multiple2", "divide"}
-  samples := []string{"plus", "minus", "multiple", "divide"}
-  //sample := loadSample("plus")
-  //sample := loadSample("plus2")
-  //sample := loadSample("minus")
-  //sample := loadSample("multiple")
-  //sample := loadSample("multiple2")
-  //sample := loadSample("divide")
+  //sampleNames := []string{"plus", "plus2", "minus", "multiple", "multiple2", "divide"}
 
   log.Println("Sample \t Evaluation \t Result")
-  for _, sampleName := range samples {
+  for _, sampleName := range sampleNames {
     sample := loadSample(sampleName)
     res := n.Calculate(sample.In)
     e := lern.Evaluation(n, sample.In, sample.Out)
@@ -53,15 +48,18 @@ func testNetwork (n *neural.Network) {
 }
 func lernNetwork (n *neural.Network) {
   samples := make([]*Sample,0,10)
+
   samples = append(samples, loadSample("plus"))
   samples = append(samples, loadSample("minus"))
   samples = append(samples, loadSample("multiple"))
   samples = append(samples, loadSample("divide"))
 
   for i := 0; i < 10000; i++ {
+
     for _, s := range samples {
       lern.Lern(n, s.In, s.Out, speed)
     }
+
   }
 
 }
