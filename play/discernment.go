@@ -26,8 +26,8 @@ func DiscernmentMain () {
   n := loadNetwork()
 
   testNetwork(n)
-  lernNetwork(n)
-  testNetwork(n)
+  //lernNetwork(n)
+  //testNetwork(n)
 
   saveNetwork(n)
 }
@@ -43,9 +43,11 @@ func testNetwork (n *neural.Network) {
   //sample := loadSample("multiple2")
   //sample := loadSample("divide")
 
-  for _, sample := range samples {
-    res := n.Calculate(loadSample(sample).In)
-    log.Printf("%s: %v",sample, res)
+  for _, sampleName := range samples {
+    sample := loadSample(sampleName)
+    res := n.Calculate(sample.In)
+    e := lern.Evaluation(n, sample.In, sample.Out)
+    log.Printf("%s - %.3f: %v" , sampleName, e, res)
   }
 }
 func lernNetwork (n *neural.Network) {
