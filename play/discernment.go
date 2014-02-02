@@ -27,9 +27,9 @@ func DiscernmentMain () {
   //createNetwork()
   n := loadNetwork()
 
-  testNetwork(n)
-  //lernNetwork(n)
   //testNetwork(n)
+  //lernNetwork(n)
+  testNetwork(n)
 
   saveNetwork(n)
 }
@@ -37,6 +37,7 @@ func DiscernmentMain () {
 func testNetwork (n *neural.Network) {
   log.Println("--------------------------------------")
   //sampleNames := []string{"plus", "plus2", "minus", "multiple", "multiple2", "divide"}
+  sampleNames := []string{"minus3"}
 
   log.Println("Sample \t Evaluation \t Result")
   for _, sampleName := range sampleNames {

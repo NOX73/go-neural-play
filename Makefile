@@ -5,9 +5,10 @@ run:
 
 deps:
 	@( \
-		go get github.com/NOX73/go-neural; \
-		go get github.com/NOX73/go-neural/persist; \
-		go get github.com/NOX73/go-neural/lern; \
+		go get -u github.com/NOX73/go-neural; \
+		go get -u github.com/NOX73/go-neural/persist; \
+		go get -u github.com/NOX73/go-neural/lern; \
+		go get -u github.com/NOX73/go-neural/engine; \
 	)
 
 vim: 
