@@ -2,7 +2,6 @@ package main
 
 import . "./play"
 
-func main () {
-  MulriplyMain()
+func main() {
+	LangMain()
 }
-
