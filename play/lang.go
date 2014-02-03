@@ -6,15 +6,19 @@ import (
 	"github.com/NOX73/go-neural/engine"
 	"github.com/NOX73/go-neural/lern"
 	"github.com/NOX73/go-neural/persist"
+	"github.com/cheggaaa/pb"
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
 )
 
 func LangMain() {
+
+	createLangNetwork()
+
 	n := loadNetwork()
 
-	//createLangNetwork()
 	testEngine(n)
 
 	c := make(chan os.Signal, 1)
@@ -39,27 +43,31 @@ lernLoop:
 }
 
 var (
-	//gosamplePath = "/Users/nox73/kaize/docker/archive/archive_test.go"
-	//rbsamplePath = "/Users/nox73/kaize/sfk/lib/sfk/generators/app/templates/controllers/root.rb"
 	gosamplePath = "./json/sample/sample.go"
-	rbsamplePath = "./json/sample/sample.rb"
+	rbsamplePath = "./json/sample/sample2.rb"
+	jssamplePath = "./json/sample/sample.js"
+
+	sampleLen    = 200
+	lerningSpeed = 0.1
 )
 
 func checkEngine(n *neural.Network) bool {
+
 	gosample := getSampleFromFile(gosamplePath)
 	rbsample := getSampleFromFile(rbsamplePath)
+	jssample := getSampleFromFile(jssamplePath)
 
-	var out []float64
+	var outgo, outrb, outjs []float64
 
-	out = n.Calculate(gosample)
-	if out[0] < 0.8 || out[1] > 0.2 {
-		log.Println("CheckFailed", gosamplePath, out)
-		return false
-	}
+	outgo = n.Calculate(gosample)
+	outrb = n.Calculate(rbsample)
+	outjs = n.Calculate(jssample)
 
-	out = n.Calculate(rbsample)
-	if out[1] < 0.8 || out[0] > 0.2 {
-		log.Println("CheckFailed", rbsamplePath, out)
+	log.Println("Check go", outgo)
+	log.Println("Check rb", outrb)
+	log.Println("Check js", outjs)
+
+	if outgo[0] < 0.9 || outrb[1] < 0.9 || outjs[2] < 0.9 {
 		return false
 	}
 
@@ -69,36 +77,36 @@ func checkEngine(n *neural.Network) bool {
 func testEngine(n *neural.Network) {
 	gosample := getSampleFromFile(gosamplePath)
 	rbsample := getSampleFromFile(rbsamplePath)
+	jssample := getSampleFromFile(jssamplePath)
 
 	log.Println(gosamplePath, n.Calculate(gosample))
 	log.Println(rbsamplePath, n.Calculate(rbsample))
+	log.Println(jssamplePath, n.Calculate(jssample))
 }
 
 func lernEngine(n *neural.Network) {
 
 	gofiles := getGoFiles()
 	rbfiles := getRbFiles()
+	jsfiles := getJsFiles()
 
-	//min := 5
-	min := len(gofiles)
+	count := 1000
+	bar := pb.StartNew(count)
 
-	if min > len(rbfiles) {
-		min = len(rbfiles)
+	for i := 0; i < count; i++ {
+		bar.Increment()
+		lernLangFile(n, gofiles[rand.Intn(len(gofiles))], []float64{1, 0, 0})
+		lernLangFile(n, rbfiles[rand.Intn(len(rbfiles))], []float64{0, 1, 0})
+		lernLangFile(n, jsfiles[rand.Intn(len(jsfiles))], []float64{0, 0, 1})
 	}
-
-	for i := 0; i < min; i++ {
-		//log.Println("Iteration #", i)
-
-		lernLangFile(n, gofiles[i], []float64{1, 0})
-		//lernLangFile(n, rbfiles[i], []float64{0, 1})
-	}
+	bar.Finish()
 
 }
 
 func lernLangFile(n *neural.Network, path string, out []float64) {
 	//log.Println("Lerning ", path)
 	sample := getSampleFromFile(path)
-	lern.Lern(n, sample, out, 0.1)
+	lern.Lern(n, sample, out, lerningSpeed)
 }
 
 func getSampleFromFile(path string) []float64 {
@@ -109,11 +117,18 @@ func getSampleFromFile(path string) []float64 {
 
 	defer file.Close()
 
-	sample := make([]float64, 300)
+	sample := make([]float64, sampleLen)
+	stat, _ := file.Stat()
+	size := stat.Size()
+
+	if size > int64(sampleLen) {
+		offset := rand.Int63n(size - int64(sampleLen))
+		file.Seek(offset, 0)
+	}
 
 	r := bufio.NewReader(file)
 
-	for i := 0; i < 299; i++ {
+	for i := 0; i < sampleLen-1; i++ {
 		b, err := r.ReadByte()
 		if err != nil {
 			break
@@ -140,6 +155,10 @@ func getRbFiles() []string {
 	return getLinesFromFile("/tmp/rbfiles")
 }
 
+func getJsFiles() []string {
+	return getLinesFromFile("/tmp/jsfiles")
+}
+
 func getLinesFromFile(path string) []string {
 	lines := make([]string, 0)
 	file, err := os.Open(path)
@@ -164,7 +183,10 @@ func getLinesFromFile(path string) []string {
 }
 
 func createLangNetwork() {
-	n := neural.NewNetwork(300, []int{300, 300, 2})
+	if _, err := os.Stat(jsonFile); err == nil {
+		return
+	}
+	n := neural.NewNetwork(sampleLen, []int{1000, 1000, 3})
 	n.RandomizeSynapses()
 
 	persist.ToFile(jsonFile, n)
