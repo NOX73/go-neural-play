@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"github.com/NOX73/go-neural"
 	"github.com/NOX73/go-neural/engine"
-	"github.com/NOX73/go-neural/lern"
+	"github.com/NOX73/go-neural/learn"
 	"github.com/NOX73/go-neural/persist"
 	"github.com/cheggaaa/pb"
 	"log"
@@ -24,15 +24,15 @@ func LangMain() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
-lernLoop:
+learnLoop:
 	for !checkEngine(n) {
 
-		lernEngine(n)
+		learnEngine(n)
 
 		select {
 		case <-c:
 			log.Println("Interrupt !")
-			break lernLoop
+			break learnLoop
 		default:
 		}
 
@@ -48,7 +48,7 @@ var (
 	jssamplePath = "./json/sample/sample.js"
 
 	sampleLen    = 200
-	lerningSpeed = 0.1
+	learningSpeed = 0.1
 )
 
 func checkEngine(n *neural.Network) bool {
@@ -84,7 +84,7 @@ func testEngine(n *neural.Network) {
 	log.Println(jssamplePath, n.Calculate(jssample))
 }
 
-func lernEngine(n *neural.Network) {
+func learnEngine(n *neural.Network) {
 
 	gofiles := getGoFiles()
 	rbfiles := getRbFiles()
@@ -95,18 +95,18 @@ func lernEngine(n *neural.Network) {
 
 	for i := 0; i < count; i++ {
 		bar.Increment()
-		lernLangFile(n, gofiles[rand.Intn(len(gofiles))], []float64{1, 0, 0})
-		lernLangFile(n, rbfiles[rand.Intn(len(rbfiles))], []float64{0, 1, 0})
-		lernLangFile(n, jsfiles[rand.Intn(len(jsfiles))], []float64{0, 0, 1})
+		learnLangFile(n, gofiles[rand.Intn(len(gofiles))], []float64{1, 0, 0})
+		learnLangFile(n, rbfiles[rand.Intn(len(rbfiles))], []float64{0, 1, 0})
+		learnLangFile(n, jsfiles[rand.Intn(len(jsfiles))], []float64{0, 0, 1})
 	}
 	bar.Finish()
 
 }
 
-func lernLangFile(n *neural.Network, path string, out []float64) {
-	//log.Println("Lerning ", path)
+func learnLangFile(n *neural.Network, path string, out []float64) {
+	//log.Println("Learning ", path)
 	sample := getSampleFromFile(path)
-	lern.Lern(n, sample, out, lerningSpeed)
+	learn.Learn(n, sample, out, learningSpeed)
 }
 
 func getSampleFromFile(path string) []float64 {
