@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/NOX73/go-neural"
-	"github.com/NOX73/go-neural/lern"
+	"github.com/NOX73/go-neural/learn"
 	"github.com/NOX73/go-neural/persist"
 	"io/ioutil"
 	"log"
