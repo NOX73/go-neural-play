@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"github.com/NOX73/go-neural"
 	"github.com/NOX73/go-neural/engine"
-	"github.com/NOX73/go-neural/lern"
+	"github.com/NOX73/go-neural/learn"
 	"github.com/NOX73/go-neural/persist"
 	"github.com/cheggaaa/pb"
 	"log"
