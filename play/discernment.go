@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/NOX73/go-neural"
-	"github.com/NOX73/go-neural/lern"
+	"github.com/NOX73/go-neural/learn"
 	"github.com/NOX73/go-neural/persist"
 	"io/ioutil"
 	"log"
@@ -28,7 +28,7 @@ func DiscernmentMain() {
 	n := loadNetwork()
 
 	//testNetwork(n)
-	//lernNetwork(n)
+	//learnNetwork(n)
 	testNetwork(n)
 
 	saveNetwork(n)
@@ -43,11 +43,11 @@ func testNetwork(n *neural.Network) {
 	for _, sampleName := range sampleNames {
 		sample := loadSample(sampleName)
 		res := n.Calculate(sample.In)
-		e := lern.Evaluation(n, sample.In, sample.Out)
+		e := learn.Evaluation(n, sample.In, sample.Out)
 		log.Printf("%s \t %.3f \t\t %v", sampleName, e, res)
 	}
 }
-func lernNetwork(n *neural.Network) {
+func learnNetwork(n *neural.Network) {
 	samples := make([]*Sample, 0, 10)
 
 	samples = append(samples, loadSample("plus"))
@@ -58,7 +58,7 @@ func lernNetwork(n *neural.Network) {
 	for i := 0; i < 10000; i++ {
 
 		for _, s := range samples {
-			lern.Lern(n, s.In, s.Out, speed)
+			learn.Learn(n, s.In, s.Out, speed)
 		}
 
 	}

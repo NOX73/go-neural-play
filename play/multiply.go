@@ -2,7 +2,7 @@ package play
 
 import (
 	"github.com/NOX73/go-neural"
-	"github.com/NOX73/go-neural/lern"
+	"github.com/NOX73/go-neural/learn"
 	//"github.com/NOX73/go-neural/persist"
 	"log"
 	"math"
@@ -55,7 +55,7 @@ func MulriplyMain() {
 
 		log.Printf("Error value: %f * %f = %f", test[0], test[1], test[0]*test[1])
 
-		lern.Lern(network, test, []float64{test[0] * test[1]}, 0.1)
+		learn.Learn(network, test, []float64{test[0] * test[1]}, 0.1)
 	}
 
 }

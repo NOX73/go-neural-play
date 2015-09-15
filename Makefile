@@ -7,7 +7,7 @@ deps:
 	@( \
 		go get -u github.com/NOX73/go-neural; \
 		go get -u github.com/NOX73/go-neural/persist; \
-		go get -u github.com/NOX73/go-neural/lern; \
+		go get -u github.com/NOX73/go-neural/learn; \
 		go get -u github.com/NOX73/go-neural/engine; \
 	)
 
