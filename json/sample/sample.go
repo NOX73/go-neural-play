@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
@@ -10,13 +11,26 @@ import (
 )
 
 const (
-	ONE_MSEC    = 1000 * 1000
-	_TIOCGWINSZ = 0x5413 // On OSX use 1074295912. Thanks zeebo
-	NUM         = 50
+	GOOS     string = runtime.GOOS
+	ONE_MSEC        = 1000 * 1000
+	NUM             = 50
+)
+
+var (
+	_TIOCGWINSZ int
 )
 
 func main() {
 
+	switch GOOS {
+	case "darwin":
+		_TIOCGWINSZ = 1074295912 // On OSX use 1074295912. Thanks zeebo
+	case "linux":
+	case "windows":
+		fallthrough
+	default:
+		_TIOCGWINSZ = 0x5413
+	}
 	var bar string
 
 	cols := TerminalWidth()
@@ -59,7 +73,7 @@ type winsize struct {
 	Ypixel uint16
 }
 
-func GetWinsize() (*winsize, os.Error) {
+func GetWinsize() (*winsize, error) {
 	ws := new(winsize)
 
 	r1, _, errno := syscall.Syscall(syscall.SYS_IOCTL,
@@ -69,7 +83,7 @@ func GetWinsize() (*winsize, os.Error) {
 	)
 
 	if int(r1) == -1 {
-		return nil, os.NewSyscallError("GetWinsize", int(errno))
+		return nil, errno
 	}
 	return ws, nil
 }
